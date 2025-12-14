@@ -9,7 +9,7 @@ services:
       # https://github.com/OWNER/REPO.git
       - GITSYNC_REPO=${GIT_SYNC_REPO}
       - GITSYNC_BRANCH=${GIT_SYNC_BRANCH}
-      - GITSYNC_ROOT=/git
+      - GITSYNC_ROOT=/work
       - GITSYNC_DEST=site
 
       # How often to sync
