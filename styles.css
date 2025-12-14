@@ -252,7 +252,8 @@ main {
 .specs,
 .power,
 .cta,
-.audience {
+.audience,
+.action-gallery {
   background: rgba(23, 26, 27, 0.75);
   border: 1px solid var(--border);
   border-radius: 18px;
@@ -266,7 +267,8 @@ main {
 .specs::before,
 .power::before,
 .cta::before,
-.audience::before {
+.audience::before,
+.action-gallery::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -279,7 +281,8 @@ main {
 .specs > *,
 .power > *,
 .cta > *,
-.audience > * {
+.audience > *,
+.action-gallery > * {
   position: relative;
   z-index: 1;
 }
@@ -406,6 +409,39 @@ main {
 }
 
 .audience-card figcaption {
+  padding: 1rem 1rem 1.2rem;
+  margin: 0;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.action-grid {
+  margin-top: 1.8rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.1rem;
+}
+
+.action-card {
+  margin: 0;
+  background: #121515;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.action-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  filter: saturate(1.05);
+}
+
+.action-card figcaption {
   padding: 1rem 1rem 1.2rem;
   margin: 0;
   color: var(--muted);
