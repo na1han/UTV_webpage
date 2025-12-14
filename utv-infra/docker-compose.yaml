@@ -31,7 +31,7 @@ services:
       - git-sync
     volumes:
       - utv_site_data:/usr/share/nginx/html:ro
-      - ./nginx.conf:/etc/nginx/conf.d/utv.conf:ro
+      - ./nginx/utv.conf:/etc/nginx/conf.d/utv.conf:ro
     networks:
       - traefik_proxy
     restart: unless-stopped
