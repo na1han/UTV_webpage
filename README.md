@@ -1,6 +1,6 @@
-# EV Property UTV Webpage
+# IronRidge Field UTV Webpage
 
-Static single-page marketing site for the EV Property UTV. Built with vanilla HTML, CSS, and JavaScript for quick setup.
+Static single-page marketing site for the IronRidge Field utility vehicle. Built with vanilla HTML, CSS, and JavaScript for quick setup.
 
 ## Getting started
 1. Open `index.html` in a browser, or run a lightweight server:
