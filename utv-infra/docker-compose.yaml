@@ -33,7 +33,6 @@ services:
     volumes:
       - utv_site_data:/usr/share/nginx/html:ro
       - ./nginx-conf.d:/etc/nginx/conf.d:ro
-
     networks:
       - traefik_proxy
     restart: no
