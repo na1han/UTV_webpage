@@ -29,10 +29,8 @@ services:
     depends_on:
       - git-sync
     volumes:
-      # git-sync writes into /git/site in the volume
-      # nginx serves from /usr/share/nginx/html/site
       - utv_site_data:/usr/share/nginx/html:ro
-      - ./utv-infra/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx.conf:/etc/nginx/conf.d/utv.conf:ro
     networks:
       - traefik_proxy
     restart: unless-stopped
