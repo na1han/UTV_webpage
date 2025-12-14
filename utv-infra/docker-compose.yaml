@@ -6,22 +6,18 @@ services:
     container_name: utv_git_sync
     user: "0:0"
     environment:
-      # Website repo (HTTPS)
       - GIT_SYNC_REPO=${GIT_SYNC_REPO}
       - GIT_SYNC_BRANCH=${GIT_SYNC_BRANCH}
 
-      # Where to sync inside the shared volume
+      # Sync into the shared volume at /work/site
       - GIT_SYNC_ROOT=/work
       - GIT_SYNC_DEST=site
-
-      # Create/maintain a stable symlink at /work/site -> current worktree
       - GIT_SYNC_LINK=site
 
-      # Sync interval + shallow clone
       - GIT_SYNC_PERIOD=${GIT_SYNC_PERIOD}
       - GIT_SYNC_DEPTH=1
 
-      # HTTPS credentials (fine-grained PAT works great here)
+      # GitHub HTTPS auth (fine-grained PAT works)
       - GIT_SYNC_USERNAME=${GIT_SYNC_USERNAME}
       - GIT_SYNC_PASSWORD=${GIT_SYNC_PASSWORD}
     volumes:
@@ -33,34 +29,41 @@ services:
     container_name: utv_nginx
     depends_on:
       - git-sync
+
+    # Serve the synced site directly from nginx's default document root
     volumes:
       - utv_work:/work:ro
-    configs:
-      - source: utv_nginx_conf
-        target: /etc/nginx/conf.d/utv.conf
+    # Replace nginx's default html directory with a symlinked path using a tiny startup script
+    command:
+      - sh
+      - -lc
+      - |
+        set -e
+        # Wait briefly for first sync (no tight loop)
+        for i in $(seq 1 30); do
+          [ -f /work/site/index.html ] && break
+          sleep 1
+        done
+        rm -rf /usr/share/nginx/html
+        ln -s /work/site /usr/share/nginx/html
+        exec nginx -g 'daemon off;'
+
     networks:
       - traefik_proxy
     restart: unless-stopped
     labels:
       - traefik.enable=true
 
-      # Router
       - traefik.http.routers.utv.rule=Host(`utv.cha.ad`)
       - traefik.http.routers.utv.entrypoints=websecure
       - traefik.http.routers.utv.tls=true
       - traefik.http.routers.utv.tls.certresolver=${TRAEFIK_CERTRESOLVER}
 
-      # Basic Auth
       - traefik.http.middlewares.utv-auth.basicauth.users=${BASIC_AUTH_USERS}
       - traefik.http.middlewares.utv-auth.basicauth.realm=UTV
       - traefik.http.routers.utv.middlewares=utv-auth@docker
 
-      # Service port inside container
       - traefik.http.services.utv.loadbalancer.server.port=80
-
-configs:
-  utv_nginx_conf:
-    file: ./utv.conf
 
 volumes:
   utv_work:
