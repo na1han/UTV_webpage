@@ -29,14 +29,16 @@ services:
     container_name: utv_nginx
     depends_on:
       - git-sync
+    command: ["sh", "-lc", "ls -la /etc/nginx/conf.d; ls -la /etc/nginx/conf.d/utv.conf || true; sleep 3600"]
     volumes:
       - utv_site_data:/usr/share/nginx/html:ro
-      - ./nginx/utv.conf:/etc/nginx/conf.d/utv.conf:ro
+      - ./nginx-conf.d:/etc/nginx/conf.d:ro
+
     networks:
       - traefik_proxy
-    restart: unless-stopped
+    restart: no
     labels:
-      - traefik.enable=true
+      - traefik.enable=false
 
       # Router
       - traefik.http.routers.utv.rule=Host(`utv.cha.ad`)
