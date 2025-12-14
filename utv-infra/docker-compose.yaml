@@ -6,18 +6,24 @@ services:
     container_name: utv_git_sync
     user: "0:0"
     environment:
+      # Website repo (HTTPS)
       - GIT_SYNC_REPO=${GIT_SYNC_REPO}
       - GIT_SYNC_BRANCH=${GIT_SYNC_BRANCH}
+
+      # Where to sync inside the shared volume
       - GIT_SYNC_ROOT=/work
       - GIT_SYNC_DEST=site
+
+      # Create/maintain a stable symlink at /work/site -> current worktree
+      - GIT_SYNC_LINK=site
+
+      # Sync interval + shallow clone
       - GIT_SYNC_PERIOD=${GIT_SYNC_PERIOD}
       - GIT_SYNC_DEPTH=1
+
+      # HTTPS credentials (fine-grained PAT works great here)
       - GIT_SYNC_USERNAME=${GIT_SYNC_USERNAME}
       - GIT_SYNC_PASSWORD=${GIT_SYNC_PASSWORD}
-
-      # Optional: make the symlink name stable/predictable (recommended)
-      # If you set this, nginx root becomes /work/site (symlink)
-      - GIT_SYNC_LINK=site
     volumes:
       - utv_work:/work
     restart: unless-stopped
@@ -44,17 +50,17 @@ services:
       - traefik.http.routers.utv.tls=true
       - traefik.http.routers.utv.tls.certresolver=${TRAEFIK_CERTRESOLVER}
 
-      # Basic Auth middleware
+      # Basic Auth
       - traefik.http.middlewares.utv-auth.basicauth.users=${BASIC_AUTH_USERS}
       - traefik.http.middlewares.utv-auth.basicauth.realm=UTV
       - traefik.http.routers.utv.middlewares=utv-auth@docker
 
-      # Service port
+      # Service port inside container
       - traefik.http.services.utv.loadbalancer.server.port=80
 
 configs:
   utv_nginx_conf:
-    file: ./nginx-conf.d/utv.conf
+    file: ./utv.conf
 
 volumes:
   utv_work:
