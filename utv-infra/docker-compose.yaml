@@ -7,18 +7,18 @@ services:
     environment:
       # Repo (HTTPS). Example:
       # https://github.com/OWNER/REPO.git
-      - GIT_SYNC_REPO=${GIT_SYNC_REPO}
-      - GIT_SYNC_BRANCH=${GIT_SYNC_BRANCH}
-      - GIT_SYNC_ROOT=/git
-      - GIT_SYNC_DEST=site
+      - GITSYNC_REPO=${GIT_SYNC_REPO}
+      - GITSYNC_BRANCH=${GIT_SYNC_BRANCH}
+      - GITSYNC_ROOT=/git
+      - GITSYNC_DEST=site
 
       # How often to sync
-      - GIT_SYNC_PERIOD=${GIT_SYNC_PERIOD}
-      - GIT_SYNC_DEPTH=1
+      - GITSYNC_PERIOD=${GIT_SYNC_PERIOD}
+      - GITSYNC_DEPTH=1
 
       # HTTPS credentials (keep these in .env)
-      - GIT_SYNC_USERNAME=${GIT_SYNC_USERNAME}
-      - GIT_SYNC_PASSWORD=${GIT_SYNC_PASSWORD}
+      - GITSYNC_USERNAME=${GIT_SYNC_USERNAME}
+      - GITSYNC_PASSWORD=${GIT_SYNC_PASSWORD}
     volumes:
       - utv_site_data:/git
     restart: unless-stopped
