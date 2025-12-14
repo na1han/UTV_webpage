@@ -1,0 +1,63 @@
+version: "3.8"
+
+services:
+  git-sync:
+    image: registry.k8s.io/git-sync/git-sync:v4.1.0
+    container_name: utv_git_sync
+    environment:
+      # Repo (HTTPS). Example:
+      # https://github.com/OWNER/REPO.git
+      - GIT_SYNC_REPO=${GIT_SYNC_REPO}
+      - GIT_SYNC_BRANCH=${GIT_SYNC_BRANCH}
+      - GIT_SYNC_ROOT=/git
+      - GIT_SYNC_DEST=site
+
+      # How often to sync
+      - GIT_SYNC_PERIOD=${GIT_SYNC_PERIOD}
+      - GIT_SYNC_DEPTH=1
+
+      # HTTPS credentials (keep these in .env)
+      - GIT_SYNC_USERNAME=${GIT_SYNC_USERNAME}
+      - GIT_SYNC_PASSWORD=${GIT_SYNC_PASSWORD}
+    volumes:
+      - utv_site_data:/git
+    restart: unless-stopped
+
+  utv-nginx:
+    image: nginx:alpine
+    container_name: utv_nginx
+    depends_on:
+      - git-sync
+    volumes:
+      # git-sync writes into /git/site in the volume
+      # nginx serves from /usr/share/nginx/html/site
+      - utv_site_data:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - traefik_proxy
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+
+      # Router
+      - traefik.http.routers.utv.rule=Host(`utv.cha.ad`)
+      - traefik.http.routers.utv.entrypoints=websecure
+      - traefik.http.routers.utv.tls=true
+      # If you use a certresolver, set it via env:
+      - traefik.http.routers.utv.tls.certresolver=${TRAEFIK_CERTRESOLVER}
+
+      # Basic Auth middleware
+      - traefik.http.middlewares.utv-auth.basicauth.users=${BASIC_AUTH_USERS}
+      # (optional) realm string in browser prompt
+      - traefik.http.middlewares.utv-auth.basicauth.realm=UTV
+      - traefik.http.routers.utv.middlewares=utv-auth@docker
+
+      # Service port
+      - traefik.http.services.utv.loadbalancer.server.port=80
+
+volumes:
+  utv_site_data:
+
+networks:
+  traefik_proxy:
+    external: true
