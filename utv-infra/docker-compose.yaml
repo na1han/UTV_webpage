@@ -6,14 +6,14 @@ services:
     container_name: utv_git_sync
     user: "0:0"
     environment:
-      - GITSYNC_REPO=${GIT_SYNC_REPO}
-      - GITSYNC_BRANCH=${GIT_SYNC_BRANCH}
-      - GITSYNC_ROOT=/work
-      - GITSYNC_DEST=site
-      - GITSYNC_PERIOD=${GIT_SYNC_PERIOD}
-      - GITSYNC_DEPTH=1
-      - GITSYNC_USERNAME=${GIT_SYNC_USERNAME}
-      - GITSYNC_PASSWORD=${GIT_SYNC_PASSWORD}
+      - GIT_SYNC_REPO=${GIT_SYNC_REPO}
+      - GIT_SYNC_BRANCH=${GIT_SYNC_BRANCH}
+      - GIT_SYNC_ROOT=/work
+      - GIT_SYNC_DEST=site
+      - GIT_SYNC_PERIOD=${GIT_SYNC_PERIOD}
+      - GIT_SYNC_DEPTH=1
+      - GIT_SYNC_USERNAME=${GIT_SYNC_USERNAME}
+      - GIT_SYNC_PASSWORD=${GIT_SYNC_PASSWORD}
 
       # Optional: make the symlink name stable/predictable (recommended)
       # If you set this, nginx root becomes /work/site (symlink)
