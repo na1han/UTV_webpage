@@ -575,6 +575,12 @@ a:focus-visible {
   font-weight: 700;
 }
 
+.footer .copyright {
+  margin: 0.5rem 0 0;
+  color: var(--light);
+  font-weight: 600;
+}
+
 .footer-links {
   display: flex;
   justify-content: center;
