@@ -6,20 +6,15 @@ services:
     container_name: utv_git_sync
     user: "0:0"
     environment:
-      - GIT_SYNC_REPO=${GIT_SYNC_REPO}
-      - GIT_SYNC_BRANCH=${GIT_SYNC_BRANCH}
-
-      # Sync into the shared volume at /work/site
-      - GIT_SYNC_ROOT=/work
-      - GIT_SYNC_DEST=site
-      - GIT_SYNC_LINK=site
-
-      - GIT_SYNC_PERIOD=${GIT_SYNC_PERIOD}
-      - GIT_SYNC_DEPTH=1
-
-      # GitHub HTTPS auth (fine-grained PAT works)
-      - GIT_SYNC_USERNAME=${GIT_SYNC_USERNAME}
-      - GIT_SYNC_PASSWORD=${GIT_SYNC_PASSWORD}
+      - GITSYNC_REPO=${GIT_SYNC_REPO}
+      - GITSYNC_REF=${GIT_SYNC_BRANCH}      # or just hardcode main
+      - GITSYNC_ROOT=/work
+      - GITSYNC_DEST=site
+      - GITSYNC_LINK=site
+      - GITSYNC_PERIOD=${GIT_SYNC_PERIOD}
+      - GITSYNC_DEPTH=1
+      - GITSYNC_USERNAME=${GIT_SYNC_USERNAME}
+      - GITSYNC_PASSWORD=${GIT_SYNC_PASSWORD}
     volumes:
       - utv_work:/work
     restart: unless-stopped
