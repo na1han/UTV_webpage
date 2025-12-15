@@ -18,15 +18,17 @@
 body {
   margin: 0;
   font-family: 'Inter', 'Roboto', system-ui, -apple-system, sans-serif;
-  background-image: url('Gemini_Generated_Image_1iywow1iywow1iyw.png');
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-attachment: fixed;
+  background:
+    linear-gradient(130deg, rgba(12, 16, 16, 0.86), rgba(12, 16, 16, 0.76)),
+    radial-gradient(circle at 12% 18%, rgba(75, 161, 77, 0.18), transparent 35%),
+    radial-gradient(circle at 88% 12%, rgba(200, 134, 61, 0.16), transparent 28%),
+    url('Gemini_Generated_Image_1iywow1iywow1iyw.png') center / cover no-repeat fixed;
   color: var(--text);
   line-height: 1.6;
   position: relative;
   min-height: 100vh;
+  background-blend-mode: multiply, normal, normal, normal;
+  filter: saturate(0.92) brightness(0.84);
 }
 
 a {

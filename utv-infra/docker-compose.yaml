@@ -1,0 +1,69 @@
+version: "3.8"
+
+services:
+  git-sync:
+    image: registry.k8s.io/git-sync/git-sync:v4.1.0
+    container_name: utv_git_sync
+    user: "0:0"
+    environment:
+      - GITSYNC_REPO=${GIT_SYNC_REPO}
+      - GITSYNC_REF=${GIT_SYNC_BRANCH}      # or just hardcode main
+      - GITSYNC_ROOT=/work
+      - GITSYNC_DEST=site
+      - GITSYNC_LINK=site
+      - GITSYNC_PERIOD=${GIT_SYNC_PERIOD}
+      - GITSYNC_DEPTH=1
+      - GITSYNC_USERNAME=${GIT_SYNC_USERNAME}
+      - GITSYNC_PASSWORD=${GIT_SYNC_PASSWORD}
+    volumes:
+      - utv_work:/work
+    restart: unless-stopped
+
+  utv-nginx:
+    image: nginx:alpine
+    container_name: utv_nginx
+    depends_on:
+      - git-sync
+    volumes:
+      - utv_work:/work:ro
+    command:
+      - sh
+      - -lc
+      - |
+        set -e
+        # Wait up to 120s for the first sync
+        for i in $(seq 1 120); do
+          if [ -d /work/site ]; then
+            break
+          fi
+          sleep 1
+        done
+
+        echo "=== /work contents ==="
+        ls -la /work || true
+        echo "=== /work/site contents ==="
+        ls -la /work/site || true
+
+        rm -rf /usr/share/nginx/html
+        ln -s /work/site /usr/share/nginx/html
+        exec nginx -g 'daemon off;'
+    networks:
+      - traefik_proxy
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.utv.rule=Host(`utv.cha.ad`,`utv.api.chadkrause.com`)
+      - traefik.http.routers.utv.entrypoints=websecure
+      - traefik.http.routers.utv.tls=true
+      - traefik.http.routers.utv.tls.certresolver=${TRAEFIK_CERTRESOLVER}
+      - traefik.http.middlewares.utv-auth.basicauth.users=${BASIC_AUTH_USERS}
+      - traefik.http.middlewares.utv-auth.basicauth.realm=UTV
+      - traefik.http.routers.utv.middlewares=utv-auth@docker
+      - traefik.http.services.utv.loadbalancer.server.port=80
+
+volumes:
+  utv_work:
+
+networks:
+  traefik_proxy:
+    external: true
