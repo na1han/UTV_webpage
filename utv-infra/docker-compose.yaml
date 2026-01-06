@@ -52,7 +52,7 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.routers.utv.rule=Host(`utv.cha.ad`,`utv.api.chadkrause.com`)
+      - traefik.http.routers.utv.rule={$HOST_RULE}
       - traefik.http.routers.utv.entrypoints=websecure
       - traefik.http.routers.utv.tls=true
       - traefik.http.routers.utv.tls.certresolver=${TRAEFIK_CERTRESOLVER}
